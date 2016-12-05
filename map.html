@@ -3,10 +3,9 @@
 <style>
     .invisible{display:none;}
     .map{position:relative; height:500px; padding:10px; background-color: floralwhite;}
-    .centered{position:absolute; top:50%; left:50%; margin-right:-50%; transform: translate(-50%, -50%);}
-    .bubble {fill:cornsilk;}
-    .main_bubble{stroke:paleturquoise; stroke-width:2;}
-    .blue{fill:cornflowerblue; stroke:cornflowerblue; background-color: cornflowerblue;}
+    .bubble {fill:moccasin;}
+    .bubble:hover {fill:cornflowerblue; stroke: springgreen; background-color: cornflowerblue;}
+    .main_bubble{stroke:teal; stroke-width:2;}
 </style>
 
 <html>
@@ -14,9 +13,9 @@
     <body>
         <button style="position:static; height:20px" id="btn" >make invisible</button>
         <div class="map">
-            <svg id="main" class="centered" height="100%" width="100%">
-                <line x1="50%" y1="50%" x2="80%" y2="80%" style="stroke:paleturquoise;stroke-width:2"></line>
-                <ellipse id= "main_bubble" class="main_bubble bubble" cx="50%" cy="50%" rx="75" ry="60"></ellipse>
+            <svg id="main" style="position:relative;" height="100%" width="100%">
+                <ellipse id="main_bubble" class="main_bubble bubble" cx="50%" cy="50%" rx="75" ry="60"></ellipse>
+                <text class="centered" fill="slate" font-size="20" font-family="Comic Sans MS" x="50%" y="50%" text-anchor="middle">Crawler</text>
             </svg>
         </div>
     </body>
@@ -27,12 +26,29 @@
         var secondary = document.getElementById('secondary');
         var btn = document.getElementById('btn');
         
-        function blue(x) {x.classList.toggle("blue")}
+        var a_list = {};
         
-        main_b.onmouseover = function() {blue(main_b)};
-        main_b.onmouseout = function() {blue(main_b)};
-        main.onmouseover = function() {blue(main)};
-        main.onmouseout = function() {blue(main)};
+        <!-- grabbed from <http://stackoverflow.com/questions/9284558/read-text-file-into-variables-with-javascript> -->
+        function store_links(){
+            a_list = {};
+            jQuery.get("a_list.txt", function(data){
+                var lines=data.split('\n');  
+                for(i=0;i<lines.length;i++){
+                    var words = lines[i].split(' ');
+                        for(j=1;j<words.length;j++){
+                            a_list[words[0]].push(words[j]);
+                    }
+                }
+            });
+        }
+        
+        function display_links(key){
+            main.innerHTML.append()
+        }
+        
+        window.onload = function() {
+            store_links();
+        }
         btn.onclick = function() {main.classList.toggle("invisible");};
         
     </script>
