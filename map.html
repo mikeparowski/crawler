@@ -2,25 +2,37 @@
 
 <style>
     .invisible{display:none;}
-    .main_svg{position:absolute; top:50%; left:50%; transform: translate(-50%, -50%);  }
-    .main_bubble{fill:cornsilk;}
+    .map{position:relative; height:500px; padding:10px; background-color: floralwhite;}
+    .centered{position:absolute; top:50%; left:50%; margin-right:-50%; transform: translate(-50%, -50%);}
+    .bubble {fill:cornsilk;}
+    .main_bubble{stroke:paleturquoise; stroke-width:2;}
+    .blue{fill:cornflowerblue; stroke:cornflowerblue; background-color: cornflowerblue;}
 </style>
 
 <html>
     <head><title>Crawler</title></head>
     <body>
-        <div style="position:relative; height:600px; width:100%;">
-            <svg id="main" class="main_svg" height="200" width="200">
-                <ellipse class="main_bubble" cx="100" cy="100" rx="75" ry="60" stroke="seafoam" stroke-width="2"></ellipse>
+        <button style="position:static; height:20px" id="btn" >make invisible</button>
+        <div class="map">
+            <svg id="main" class="centered" height="100%" width="100%">
+                <line x1="50%" y1="50%" x2="80%" y2="80%" style="stroke:paleturquoise;stroke-width:2"></line>
+                <ellipse id= "main_bubble" class="main_bubble bubble" cx="50%" cy="50%" rx="75" ry="60"></ellipse>
             </svg>
         </div>
-        <button id="btn">make invisible</button>
     </body>
-    
+        
     <script>
         var main = document.getElementById('main');
+        var main_b = document.getElementById('main_bubble');
+        var secondary = document.getElementById('secondary');
         var btn = document.getElementById('btn');
         
+        function blue(x) {x.classList.toggle("blue")}
+        
+        main_b.onmouseover = function() {blue(main_b)};
+        main_b.onmouseout = function() {blue(main_b)};
+        main.onmouseover = function() {blue(main)};
+        main.onmouseout = function() {blue(main)};
         btn.onclick = function() {main.classList.toggle("invisible");};
         
     </script>
