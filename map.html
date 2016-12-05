@@ -2,26 +2,25 @@
 
 <style>
     .invisible{display:none;}
+    .main_svg{position:absolute; top:50%; left:50%; transform: translate(-50%, -50%);  }
     .main_bubble{fill:cornsilk;}
 </style>
 
 <html>
     <head><title>Crawler</title></head>
     <body>
-        <div style="width:100%">
-            <svg id="main" height="200" width="200">
-                <ellipse class="main_bubble" cx="100" cy="100" rx="75" ry="60"></ellipse>
-                <text font-size="20" fill=black>Main Bubble</text>
+        <div style="position:relative; height:600px; width:100%;">
+            <svg id="main" class="main_svg" height="200" width="200">
+                <ellipse class="main_bubble" cx="100" cy="100" rx="75" ry="60" stroke="seafoam" stroke-width="2"></ellipse>
             </svg>
         </div>
-        <div id="stop">hey wassup</div>
-        <button id="btn1">make invisible</button>
-        <button id="btn2">make red</button>
+        <button id="btn">make invisible</button>
     </body>
     
     <script>
         var main = document.getElementById('main');
+        var btn = document.getElementById('btn');
         
-        main.onclick = function() {main.classList.toggle("invisible");};
+        btn.onclick = function() {main.classList.toggle("invisible");};
         
     </script>
