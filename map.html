@@ -2,53 +2,68 @@
 
 <style>
     .invisible{display:none;}
-    .map{position:relative; height:500px; padding:10px; background-color: floralwhite;}
-    .bubble {fill:moccasin;}
-    .bubble:hover {fill:cornflowerblue; stroke: springgreen; background-color: cornflowerblue;}
+    .map{position:relative; height:500px; padding:10px; background-color: lavender;}
+    .bubble {fill: blanchedalmond;}
+    .bubble:hover {fill:cornflowerblue; stroke: olive; background-color: cornflowerblue;}
     .main_bubble{stroke:teal; stroke-width:2;}
+    .testclass{color:red;}
 </style>
+
+
 
 <html>
     <head><title>Crawler</title></head>
-    <body>
-        <button style="position:static; height:20px" id="btn" >make invisible</button>
+    <body style="background-color:whitesmoke">
+        <button style="position:static; height:20px" id="btn" >make html</button>
         <div class="map">
             <svg id="main" style="position:relative;" height="100%" width="100%">
-                <ellipse id="main_bubble" class="main_bubble bubble" cx="50%" cy="50%" rx="75" ry="60"></ellipse>
-                <text class="centered" fill="slate" font-size="20" font-family="Comic Sans MS" x="50%" y="50%" text-anchor="middle">Crawler</text>
+                <ellipse id=main_bubble class="main_bubble bubble" cx=50% cy=50% rx=75 ry=60></ellipse>
+                <text class=bubble-text fill=slate font-size=20 font-family=Helvetica text-anchor=middle dominant-baseline=middle x=50% y=50%>Damn</text>
+                <ellipse class=bubble cx=80% cy=80% rx=75 ry=60></ellipse>
             </svg>
         </div>
     </body>
         
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
     <script>
         var main = document.getElementById('main');
         var main_b = document.getElementById('main_bubble');
-        var secondary = document.getElementById('secondary');
         var btn = document.getElementById('btn');
+        
+        var main_b_gra = "<ellipse id=main_bubble class=\"main_bubble bubble\" cx=50% cy=50% rx=75 ry=60></ellipse>";
+        var b_svggra = ["<ellipse id=bubble class=bubble cx=", " cy=", " rx=75 ry=60></ellipse>"]
+        var b_svgtxt = ["<text class=bubble-text fill=slate font-size=20 font-family=Helvetica text-anchor=middle dominant-baseline=middle x=" , " y=" ," >", "</text>"];
         
         var a_list = {};
         
-        <!-- grabbed from <http://stackoverflow.com/questions/9284558/read-text-file-into-variables-with-javascript> -->
         function store_links(){
             a_list = {};
-            jQuery.get("a_list.txt", function(data){
-                var lines=data.split('\n');  
-                for(i=0;i<lines.length;i++){
-                    var words = lines[i].split(' ');
-                        for(j=1;j<words.length;j++){
-                            a_list[words[0]].push(words[j]);
+            $.get("a_list.txt", function(data){
+                    var lines=data.split('\n');  
+                    for(i=0;i<lines.length;i++){
+                        var words = lines[i].split(' ');
+                            a_list[words[0]] = [];
+                            for(j=1;j<words.length;j++){
+                                a_list[words[0]].push(words[j]);
+                        }
                     }
-                }
-            });
+                });
+            
         }
         
         function display_links(key){
-            main.innerHTML.append()
+            main.innerHTML = '';
+            main.innerHTML += main_b_gra;
+            main.innerHTML += b_svgtxt[0]+"50%"+b_svgtxt[1]+"50%"+b_svgtxt[2]+key+b_svgtxt[3];
+            main.innerHTML += b_svggra[0]+"80%"+b_svggra[1]+"80%"+b_svggra[2];
+            main.innerHTML += b_svgtxt[0]+"80%"+b_svgtxt[1]+"80%"+b_svgtxt[2]+a_list[key][0]+b_svgtxt[3];
+            $("body").html($("body").html());
         }
         
         window.onload = function() {
             store_links();
         }
-        btn.onclick = function() {main.classList.toggle("invisible");};
+        btn.onclick = function() {display_links("Kill")};
         
     </script>
