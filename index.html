@@ -42,7 +42,7 @@
             $.get("a_list.txt", function(data){
                     var lines=data.split('\n');  
                     for(i=0;i<lines.length;i++){
-                        var words = lines[i].split(',');
+                        var words = lines[i].split(' ');
                             a_list[words[0]] = [];
                             for(j=1;j<words.length;j++){
                                 a_list[words[0]].push(words[j]);
