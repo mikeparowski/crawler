@@ -2,9 +2,9 @@
 
 <style>
     .invisible{display:none;}
-    .map{position:relative; height:500px; padding:10px; background-color: lavender;}
+    .map{position:relative; height:800px; padding:10px; background-color: lavender;}
     .bubble {fill: blanchedalmond;  stroke-width:2;}
-    .bubble:hover {fill:cornflowerblue; stroke: olive; background-color: cornflowerblue;}
+    .bubble-text:hover {fill:cornflowerblue; stroke: cornflowerblue; background-color: cornflowerblue; font-weight:bold;}
     .main_bubble{stroke:teal;}
     .sec_bubble{stroke:crimson;}
     .sec_line{stroke:crimson;stroke-width:2;}
@@ -24,14 +24,14 @@
     </body>
         
     
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script>
         var main = document.getElementById('main');
         var main_b = document.getElementById('main_bubble');
         var btn = document.getElementById('btn');
         
         var main_b_gra = "<ellipse id=main_bubble class=\"main_bubble bubble\" cx=50% cy=50% rx=75 ry=60></ellipse>";
-        var b_svggra = ["<ellipse id=bubble class=\"bubble sec_bubble\" cx=", " cy=", " rx=75 ry=60></ellipse>"]
+        var b_svggra = ["<ellipse class=\"bubble sec_bubble\" cx=", " cy=", " rx=75 ry=60></ellipse>"]
         var b_svgtxt = ["<text class=bubble-text fill=slate font-size=20 font-family=Helvetica text-anchor=middle dominant-baseline=middle x=" , " y=" ," >", "</text>"];
         
         var a_list;
@@ -41,36 +41,35 @@
             $.get("a_list.txt", function(data){
                     var lines=data.split('\n');  
                     for(i=0;i<lines.length;i++){
-                        var words = lines[i].split(' ');
+                        var words = lines[i].split(',');
                             a_list[words[0]] = [];
                             for(j=1;j<words.length;j++){
                                 a_list[words[0]].push(words[j]);
                         }
                     }
                 });
-            
         }
         
         function display_links(key){
             main.innerHTML = '';
             main.innerHTML += main_b_gra;
             main.innerHTML += b_svgtxt[0]+"50%"+b_svgtxt[1]+"50%"+b_svgtxt[2]+key+b_svgtxt[3];
-            display_sec_bubble("80%", "80%", a_list[key][0]);
-            display_sec_bubble("20%", "80%", a_list[key][1]);
-            display_sec_bubble("20%", "20%", a_list[key][2]);
-            display_sec_bubble("80%", "20%", a_list[key][3]);
+            display_sec_bubble("80%", "80%", key, 0);
+            display_sec_bubble("20%", "80%", key, 1);
+            display_sec_bubble("20%", "20%", key, 2);
+            display_sec_bubble("80%", "20%", key, 3);
             $("body").html($("body").html());
         }
         
-        function display_sec_bubble(x, y, txt){
+        function display_sec_bubble(x, y, key, i){
             main.innerHTML += b_svggra[0]+x+b_svggra[1]+y+b_svggra[2];
-            main.innerHTML += b_svgtxt[0]+x+b_svgtxt[1]+y+b_svgtxt[2]+txt+b_svgtxt[3];
+            main.innerHTML += b_svgtxt[0]+x+b_svgtxt[1]+y+b_svgtxt[2]+a_list[key][i]+b_svgtxt[3];
             $("#main").prepend("<line class=sec_line x1=50% y1=50% x2="+x+" y2="+y+"> </line>");
         }
         
         window.onload = function() {
             store_links();
         }
-        btn.onclick = function() {display_links("Hella")};
-        
+            $(".bubble-text").click(function() {display_links(this.innerHTML);});
+            $("#btn").click(function() {display_links("Hella");});
     </script>

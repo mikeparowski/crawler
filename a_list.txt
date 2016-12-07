@@ -1,2 +1,8 @@
-Hella This Is The Data
-Kill What Up Fam
+Hella,This,Kill,The,Data
+Kill,What,Up,Fam,Hella
+Data,This,Hella,Kill,What
+What,Hella,Kill,The,Data
+Up,Fam,Kill,Hella,What
+Fam,Kill,Hella,Data,This
+The,Hella,Kill,This,Data
+This,Hella,Fam,What,Up
