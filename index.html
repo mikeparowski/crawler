@@ -70,9 +70,15 @@
         }
         
         function display_sec_bubble(x, y, key, i){
-            main.innerHTML += b_svggra[0]+x+b_svggra[1]+y+b_svggra[2];
+            if(a_list[key][i] in a_list){
+                main.innerHTML += b_svggra[0]+x+b_svggra[1]+y+b_svggra[2];
+                $("#main").prepend("<line class=sec_line x1=50% y1=50% x2="+x+" y2="+y+"> </line>");
+            }
+            else {
+                main.innerHTML += b_svggra[0]+x+b_svggra[1]+y+" style=\"stroke:blue;\""+b_svggra[2];
+                $("#main").prepend("<line class=sec_line x1=50% y1=50% x2="+x+" y2="+y+" style=\"stroke:blue;\""+"> </line>");
+            }
             main.innerHTML += b_svgtxt[0]+x+b_svgtxt[1]+y+b_svgtxt[2]+a_list[key][i]+b_svgtxt[3];
-            $("#main").prepend("<line class=sec_line x1=50% y1=50% x2="+x+" y2="+y+"> </line>");
         }
         
         window.onload = function() {
