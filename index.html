@@ -7,6 +7,7 @@
     .bubble:hover {fill:cornflowerblue; stroke: olive; background-color: cornflowerblue;}
     .main_bubble{stroke:teal;}
     .sec_bubble{stroke:crimson;}
+    .sec_line{stroke:crimson;stroke-width:2;}
     .testclass{color:red;}
 </style>
 
@@ -33,7 +34,7 @@
         var b_svggra = ["<ellipse id=bubble class=\"bubble sec_bubble\" cx=", " cy=", " rx=75 ry=60></ellipse>"]
         var b_svgtxt = ["<text class=bubble-text fill=slate font-size=20 font-family=Helvetica text-anchor=middle dominant-baseline=middle x=" , " y=" ," >", "</text>"];
         
-        var a_list = {};
+        var a_list;
         
         function store_links(){
             a_list = {};
@@ -54,9 +55,17 @@
             main.innerHTML = '';
             main.innerHTML += main_b_gra;
             main.innerHTML += b_svgtxt[0]+"50%"+b_svgtxt[1]+"50%"+b_svgtxt[2]+key+b_svgtxt[3];
-            main.innerHTML += b_svggra[0]+"80%"+b_svggra[1]+"80%"+b_svggra[2];
-            main.innerHTML += b_svgtxt[0]+"80%"+b_svgtxt[1]+"80%"+b_svgtxt[2] + (a_list[key][0]) + b_svgtxt[3];
+            display_sec_bubble("80%", "80%", a_list[key][0]);
+            display_sec_bubble("20%", "80%", a_list[key][1]);
+            display_sec_bubble("20%", "20%", a_list[key][2]);
+            display_sec_bubble("80%", "20%", a_list[key][3]);
             $("body").html($("body").html());
+        }
+        
+        function display_sec_bubble(x, y, txt){
+            main.innerHTML += b_svggra[0]+x+b_svggra[1]+y+b_svggra[2];
+            main.innerHTML += b_svgtxt[0]+x+b_svgtxt[1]+y+b_svgtxt[2]+txt+b_svgtxt[3];
+            $("#main").prepend("<line class=sec_line x1=50% y1=50% x2="+x+" y2="+y+"> </line>");
         }
         
         window.onload = function() {
