@@ -2,7 +2,7 @@
 
 <style>
     .invisible{display:none;}
-    .map{position:relative; height:800px; padding:10px; background-color: lavender;}
+    .map{position:relative; height:700px; padding:10px; background-color: lavender;}
     .bubble {fill: blanchedalmond;  stroke-width:2;}
     .bubble-text:hover {fill:cornflowerblue; stroke: cornflowerblue; background-color: cornflowerblue; font-weight:bold;}
     .main_bubble{stroke:teal;}
@@ -16,9 +16,10 @@
 <html>
     <head><title>Crawler</title></head>
     <body style="background-color:whitesmoke">
-        <button style="position:static; height:20px" id="btn" >make html</button>
         <div class="map">
             <svg id="main" style="position:relative;" height="100%" width="100%">
+                <ellipse class=bubble style="fill:green;stroke:green" cx=50% cy=50% rx=75 ry=60></ellipse>
+                <text id=start class=bubble-text fill=slate font-size=20 font-family=Helvetica text-anchor=middle dominant-baseline=middle x=50% y=50%>START</text>
             </svg>
         </div>
     </body>
@@ -30,8 +31,8 @@
         var main_b = document.getElementById('main_bubble');
         var btn = document.getElementById('btn');
         
-        var main_b_gra = "<ellipse id=main_bubble class=\"main_bubble bubble\" cx=50% cy=50% rx=75 ry=60></ellipse>";
-        var b_svggra = ["<ellipse class=\"bubble sec_bubble\" cx=", " cy=", " rx=75 ry=60></ellipse>"]
+        var main_b_gra = "<ellipse id=main_bubble class=\"main_bubble bubble\" cx=50% cy=50% rx=60 ry=45></ellipse>";
+        var b_svggra = ["<ellipse class=\"bubble sec_bubble\" cx=", " cy=", " rx=60 ry=45></ellipse>"]
         var b_svgtxt = ["<text class=bubble-text fill=slate font-size=20 font-family=Helvetica text-anchor=middle dominant-baseline=middle x=" , " y=" ," >", "</text>"];
         
         var a_list;
@@ -51,14 +52,21 @@
         }
         
         function display_links(key){
-            main.innerHTML = '';
-            main.innerHTML += main_b_gra;
-            main.innerHTML += b_svgtxt[0]+"50%"+b_svgtxt[1]+"50%"+b_svgtxt[2]+key+b_svgtxt[3];
-            display_sec_bubble("80%", "80%", key, 0);
-            display_sec_bubble("20%", "80%", key, 1);
-            display_sec_bubble("20%", "20%", key, 2);
-            display_sec_bubble("80%", "20%", key, 3);
-            $("body").html($("body").html());
+            if (key in a_list){
+                main.innerHTML = '';
+                main.innerHTML += main_b_gra;
+                main.innerHTML += b_svgtxt[0]+"50%"+b_svgtxt[1]+"50%"+b_svgtxt[2]+key+b_svgtxt[3];
+                var d = (2 * Math.PI)/(a_list[key].length);
+                var r = 30;
+                var y;
+                var x;
+                for(i=0;i<a_list[key].length;i++){
+                    y = (50+(r*Math.sin(i*d)));
+                    x = (50+(r*Math.cos(i*d)));
+                    display_sec_bubble(x+"%", y+"%", key, i);
+                }
+                $("body").html($("body").html());
+            }
         }
         
         function display_sec_bubble(x, y, key, i){
@@ -70,6 +78,6 @@
         window.onload = function() {
             store_links();
         }
-            $(".bubble-text").click(function() {display_links(this.innerHTML);});
-            $("#btn").click(function() {display_links("Hella");});
+        $("#start").click(function() {display_links("Hella")});
+        $(".bubble-text").click(function() {display_links(this.innerHTML);});
     </script>
