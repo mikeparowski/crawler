@@ -22,6 +22,7 @@
                 <text id=start class=bubble-text fill=slate font-size=20 font-family=Helvetica text-anchor=middle dominant-baseline=middle x=50% y=50%>START</text>
             </svg>
         </div>
+        <button id=btn>back</button>
     </body>
         
     
@@ -36,6 +37,7 @@
         var b_svgtxt = ["<text class=bubble-text fill=slate font-size=20 font-family=Helvetica text-anchor=middle dominant-baseline=middle x=" , " y=" ," >", "</text>"];
         
         var a_list;
+        var back = ["https://nd.edu/", "https://nd.edu/"];
         
         function store_links(){
             a_list = {};
@@ -52,21 +54,56 @@
         }
         
         function display_links(key){
+            back[0] = back[1];
+            back[1] = key;
             if (key in a_list){
                 main.innerHTML = '';
                 main.innerHTML += main_b_gra;
                 main.innerHTML += b_svgtxt[0]+"50%"+b_svgtxt[1]+"50%"+b_svgtxt[2]+key+b_svgtxt[3];
-                var d = (2 * Math.PI)/(a_list[key].length);
-                var r = 30;
-                var y;
-                var x;
-                for(i=0;i<a_list[key].length;i++){
-                    y = (50+(r*Math.sin(i*d)));
-                    x = (50+(r*Math.cos(i*d)));
-                    display_sec_bubble(x+"%", y+"%", key, i);
-                }
+                
+                var r = 45;
+                var dr = 10;
+                
+                display_links_loop(15, 3, r, dr, key);
                 $("body").html($("body").html());
             }
+        }
+        
+        function display_links_loop(max_elements, max_circles, r, dr, key){
+            var divlen = Math.floor((a_list[key].length)/max_elements);
+            var modlen = (a_list[key].length) % max_elements;
+            var dyx = (2*Math.PI)/(max_elements);
+            var start = (2*Math.PI)/(max_elements*2);
+            var j;
+            
+             if(divlen == max_circles || divlen > max_circles){
+                for(j=0;j<max_circles;j++){
+                    var y;
+                    var x;
+                    for(i=0;i<max_elements;i++){
+                        y = (50+((r-(dr*j))*(Math.sin(i*dyx+(start*j)))));
+                        x = (50+((r-(dr*j))*(Math.cos(i*dyx+(start*j)))));
+                        display_sec_bubble(x+"%", y+"%", key, i+(max_elements*j));
+                    }
+                }
+            }
+            else {
+                for(j=0;j<divlen;j++){
+                    var y;
+                    var x;
+                    for(i=0;i<max_elements;i++){
+                        y = (50+((r-(dr*j))*(Math.sin(i*dyx+(start*j)))));
+                        x = (50+((r-(dr*j))*(Math.cos(i*dyx+(start*j)))));
+                        display_sec_bubble(x+"%", y+"%", key, i+(max_elements*j));
+                    }
+                }
+                dyx = (2*Math.PI)/(modlen);
+                for(i=0;i<modlen;i++){
+                    y = (50+((r-(dr*j))*(Math.sin(i*dyx+(start*j)))));
+                    x = (50+((r-(dr*j))*(Math.cos(i*dyx+(start*j)))));
+                    display_sec_bubble(x+"%", y+"%", key, i+(max_elements*j));
+                }
+            }   
         }
         
         function display_sec_bubble(x, y, key, i){
@@ -85,5 +122,6 @@
             store_links();
         }
         $("#start").click(function() {display_links("https://nd.edu/")});
+        $("#btn").click(function() {display_links(back[0])});
         $(".bubble-text").click(function() {display_links(this.innerHTML);});
     </script>
