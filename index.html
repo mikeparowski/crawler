@@ -37,11 +37,11 @@
         var b_svgtxt = ["<text class=bubble-text fill=slate font-size=20 font-family=Helvetica text-anchor=middle dominant-baseline=middle x=" , " y=" ," >", "</text>"];
         
         var a_list;
-        var back = ["https://nd.edu/", "https://nd.edu/"];
+        var back;
         
         function store_links(){
             a_list = {};
-            $.get("a_list.txt", function(data){
+            $.get("test.txt", function(data){
                     var lines=data.split('\n');  
                     for(i=0;i<lines.length;i++){
                         var words = lines[i].split(' ');
@@ -120,6 +120,7 @@
         
         window.onload = function() {
             store_links();
+            back =["https://nd.edu/","https://nd.edu/"];
         }
         $("#start").click(function() {display_links("https://nd.edu/")});
         $("#btn").click(function() {display_links(back[0])});
