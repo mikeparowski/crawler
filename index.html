@@ -1,89 +1,83 @@
 <!DOCTYPE html>
 
 <style>
-    .invisible{display:none;}
-    .map{position:relative; height:675px; padding:10px; background-color: lavender;}
+    .map{position:relative; height:675px; margin:10px; padding:5px; background-color: lavender;}
+    .text {fill:midnightblue;}
+    .text:hover {fill:cornflowerblue; stroke: cornflowerblue; background-color: cornflowerblue; font-weight:bold;}
     .bubble {fill: antiquewhite;  stroke-width:2;}
-    .bubble-text:hover {fill:cornflowerblue; stroke: cornflowerblue; background-color: cornflowerblue; font-weight:bold;}
-    .main_bubble{stroke:lightseagreen;}
-    .sec_bubble{stroke:powderblue;}
-    .sec_line{stroke:powderblue;stroke-width:2;}
+    h1{ color:midnightblue; margin:10px}
 </style>
 
 <html>
     <head><title>Crawler</title></head>
-    <body style="background-color:whitesmoke">
+    <body style="background-color:whitesmoke;">
+        <h1>Web Map</h1>
         <div class="map">
-            <svg id="main" style="position:relative;" height="100%" width="100%">
+            <svg id="web" style="position:relative;" height="100%" width="100%">
             </svg>
         </div>
-        <button id=btn>back</button>
+        <h1>Shortest Path</h1>
+        <div class=map style="height:300px;background-color:lavenderblush">
+            <svg id="path" style="position:relative;" height="100%" width="100%">
+            </svg>
+        </div>
+        <div style="height:30px"></div>
     </body>
-     
-    <!--
-    <ellipse class=bubble style="fill:mediumseagreen;stroke:beige" cx=50% cy=50% rx=75 ry=60></ellipse>
-                <text id=start class=bubble-text fill=darkslategray font-size=30 font-family=Helvetica font-weight=bold text-anchor=middle dominant-baseline=middle x=50% y=50%>START</text>
-    -->
     
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script>
-        var main = document.getElementById('main');
-        var main_b = document.getElementById('main_bubble');
-        var btn = document.getElementById('btn');
         
-        var main_b_gra = "<ellipse id=main_bubble class=\"main_bubble bubble\" cx=50% cy=50% rx=60 ry=30></ellipse>";
-        var b_svggra = ["<ellipse class=\"bubble sec_bubble\" cx=", " cy=", " rx=60 ry=30></ellipse>"]
-        var b_svgtxt = ["<text class=bubble-text fill=slate font-size=15 font-family=Helvetica text-anchor=middle dominant-baseline=middle x=" , " y=" ," >", "</text>"];
-        
-        var a_list;
-        var clean_a_list;
-        var back;
+        var nodes;
+        var secColor = "powderblue";
+        var mainColor = "lightseagreen";
 
         function store_links(){
-            a_list = {};
+            nodes = {};
             $.get("a_list.txt", function(data){
-                    var lines=data.split('\n');  
-                    for(i=0;i<lines.length;i++){
-                        var words = lines[i].split(' ');
-                            a_list[words[0]] = [];
-                            for(j=1;j<words.length;j++){
-                                a_list[words[0]].push(words[j]);
-                        }
+                var lines=data.split('\n');  
+                for(i=0;i<lines.length;i++){
+                    var words = lines[i].split(' ');
+                    nodes[words[0]] = {"a_list": [], "clean_list": []};
+                    for(j=1;j<words.length;j++){
+                        nodes[words[0]]["a_list"].push(words[j]);
                     }
-                });
+                }
+            });
         }
         
         function store_clean(){
-            clean_a_list = {};
-            for (var key in a_list){
-                clean_a_list[key] = [];
-                for(i=0;i<a_list[key].length;i++){
-                    if(a_list[key][i] in a_list){
-                        clean_a_list[key].push(a_list[key][i]);
+            for (var key in nodes){
+                for(i=0;i<nodes[key]["a_list"].length;i++){
+                    if(nodes[key]["a_list"][i] in nodes){
+                        nodes[key]["clean_list"].push(nodes[key]["a_list"][i]);
                     }
                 }
             }
         }
         
-        function display_links(key){
-            if (key in clean_a_list){
-                back[0] = back[1];
-                back[1] = key;
-                main.innerHTML = '';
-                main.innerHTML += main_b_gra;
-                main.innerHTML += b_svgtxt[0]+"50%"+b_svgtxt[1]+"50%"+b_svgtxt[2]+key+b_svgtxt[3];
+        function display_links(key, list){
+            if (nodes[key][list].length > 0){
+                document.getElementById("web").innerHTML = '';
+                create_bubble_and_text("web", "50%", "50%", key, mainColor);
                 
                 var r = 43;
                 var dr = 11;
-                
-                display_links_loop(15, 3, r, dr, key);
+                display_links_loop(15, 3, r, dr, key, list);
                 $("body").html($("body").html());
             }
         }
         
-        function display_links_loop(max_elements, max_circles, r, dr, key){
-            var divlen = Math.floor((clean_a_list[key].length)/max_elements);
-            var modlen = (clean_a_list[key].length) % max_elements;
+        function create_bubble_and_text(id, x, y, txt, color){
+            $("#"+id).append("<ellipse id="+"bubble-"+txt+" class=bubble cx="+x+" cy="+y+" rx=60 ry=30 style=\"stroke:"+color+";\" ></ellipse>");
+            $("#"+id).append("<text id="+txt+" class=text fill=slate font-size=15 font-family=Helvetica text-anchor=middle dominant-baseline=middle x="+x+" y="+y+" >"+txt+"</text>");
+        }
+        function create_line(id, x1, y1, x2, y2, color){
+            $("#"+id).prepend("<line style=\"stroke:"+color+";stroke-width:2;\" x1="+x1+" y1="+y1+" x2="+x2+" y2="+y2+"> </line>")
+        }
+        
+        function display_links_loop(max_elements, max_circles, r, dr, key, list){
+            var divlen = Math.floor((nodes[key][list].length)/max_elements);
+            var modlen = (nodes[key][list].length) % max_elements;
             var dyx = (2*Math.PI)/(max_elements);
             var start = (2*Math.PI)/(max_elements*2);
             var j;
@@ -96,7 +90,7 @@
                 for(i=0;i<max_elements;i++){
                     y = (50+((r-(dr*j))*(Math.sin(i*dyx+(start*j)))));
                     x = (50+((r-(dr*j))*(Math.cos(i*dyx+(start*j)))));
-                    display_sec_bubble(x+"%", y+"%", key, i+(max_elements*j));
+                    display_sec_bubble(x+"%", y+"%", key, i+(max_elements*j), list);
                 }
             }
             dyx = (2*Math.PI)/(modlen);
@@ -105,22 +99,29 @@
                     break;
                 y = (50+((r-(dr*j))*(Math.sin(i*dyx+(start*j)))));
                 x = (50+((r-(dr*j))*(Math.cos(i*dyx+(start*j)))));
-                display_sec_bubble(x+"%", y+"%", key, i+(max_elements*j));
+                display_sec_bubble(x+"%", y+"%", key, i+(max_elements*j), list);
             }   
         }
         
-        function display_sec_bubble(x, y, key, i){
-            main.innerHTML += b_svggra[0]+x+b_svggra[1]+y+b_svggra[2];
-            $("#main").prepend("<line class=sec_line x1=50% y1=50% x2="+x+" y2="+y+"> </line>");
-            main.innerHTML += b_svgtxt[0]+x+b_svgtxt[1]+y+b_svgtxt[2]+clean_a_list[key][i]+b_svgtxt[3];
+        function display_sec_bubble(x, y, key, i, list){
+            create_bubble_and_text("web", x, y, nodes[key][list][i], secColor);
+            create_line("web", "50%", "50%", x, y, secColor);
+        }
+        
+        function dijkstras(start, finish){
+            if(!(start in nodes)){
+                display_svg_text("50%", "50%", start+" not found!", "#path");
+                return;
+            }
+            if(!(finish in nodes)){
+                display_svg_text("50%", "50%", finish+" not found!", "#path");
+                return;
+            }
         }
         
         window.onload = function() {
             store_links();
-            setTimeout(function() {store_clean(); display_links("https://nd.edu/")}, 15);
-            back = ["https://nd.edu/","https://nd.edu/"];
+            setTimeout(function() {store_clean(); display_links("https://nd.edu/", "clean_list")}, 20);
         }
-        $("#start").click(function() {display_links("https://nd.edu/")});
-        $("#btn").click(function() {display_links(back[0])});
-        $(".bubble-text").click(function() {display_links(this.innerHTML);});
+        $(".text").click(function() {display_links(this.innerHTML, "clean_list");});
     </script>
