@@ -41,7 +41,7 @@
         
         function store_links(){
             a_list = {};
-            $.get("test.txt", function(data){
+            $.get("a_list.txt", function(data){
                     var lines=data.split('\n');  
                     for(i=0;i<lines.length;i++){
                         var words = lines[i].split(' ');
