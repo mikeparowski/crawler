@@ -18,7 +18,7 @@ def crawl(item_url):
     links = []
     source_code = requests.get(url)
     plain_text = source_code.text
-    plain_text = plain_text.encode('utf-8').decode('utf-8')
+#    plain_text = plain_text.decode('windows-1252').encode('utf-8')
     soup = BeautifulSoup(plain_text, "lxml")
 
     for link in soup.find_all('a', attrs={'href': re.compile(".*")}):
@@ -61,6 +61,6 @@ for k in network_map:
         if v[1] is None or v[1] is "None":
             print v[0],
         else:
-            name = v[1].encode('utf-8').decode('utf-8')
-            print name.replace(" ", ""),
+#            name = v[1].decode('windows-1252').encode('utf-8')
+            print v[1].replace(" ", ""),
     print

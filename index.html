@@ -2,29 +2,28 @@
 
 <style>
     .invisible{display:none;}
-    .map{position:relative; height:700px; padding:10px; background-color: lavender;}
-    .bubble {fill: blanchedalmond;  stroke-width:2;}
+    .map{position:relative; height:675px; padding:10px; background-color: lavender;}
+    .bubble {fill: antiquewhite;  stroke-width:2;}
     .bubble-text:hover {fill:cornflowerblue; stroke: cornflowerblue; background-color: cornflowerblue; font-weight:bold;}
-    .main_bubble{stroke:teal;}
-    .sec_bubble{stroke:crimson;}
-    .sec_line{stroke:crimson;stroke-width:2;}
-    .testclass{color:red;}
+    .main_bubble{stroke:lightseagreen;}
+    .sec_bubble{stroke:powderblue;}
+    .sec_line{stroke:powderblue;stroke-width:2;}
 </style>
-
-
 
 <html>
     <head><title>Crawler</title></head>
     <body style="background-color:whitesmoke">
         <div class="map">
             <svg id="main" style="position:relative;" height="100%" width="100%">
-                <ellipse class=bubble style="fill:green;stroke:green" cx=50% cy=50% rx=75 ry=60></ellipse>
-                <text id=start class=bubble-text fill=slate font-size=20 font-family=Helvetica text-anchor=middle dominant-baseline=middle x=50% y=50%>START</text>
             </svg>
         </div>
         <button id=btn>back</button>
     </body>
-        
+     
+    <!--
+    <ellipse class=bubble style="fill:mediumseagreen;stroke:beige" cx=50% cy=50% rx=75 ry=60></ellipse>
+                <text id=start class=bubble-text fill=darkslategray font-size=30 font-family=Helvetica font-weight=bold text-anchor=middle dominant-baseline=middle x=50% y=50%>START</text>
+    -->
     
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script>
@@ -32,13 +31,14 @@
         var main_b = document.getElementById('main_bubble');
         var btn = document.getElementById('btn');
         
-        var main_b_gra = "<ellipse id=main_bubble class=\"main_bubble bubble\" cx=50% cy=50% rx=60 ry=45></ellipse>";
-        var b_svggra = ["<ellipse class=\"bubble sec_bubble\" cx=", " cy=", " rx=60 ry=45></ellipse>"]
-        var b_svgtxt = ["<text class=bubble-text fill=slate font-size=20 font-family=Helvetica text-anchor=middle dominant-baseline=middle x=" , " y=" ," >", "</text>"];
+        var main_b_gra = "<ellipse id=main_bubble class=\"main_bubble bubble\" cx=50% cy=50% rx=60 ry=30></ellipse>";
+        var b_svggra = ["<ellipse class=\"bubble sec_bubble\" cx=", " cy=", " rx=60 ry=30></ellipse>"]
+        var b_svgtxt = ["<text class=bubble-text fill=slate font-size=15 font-family=Helvetica text-anchor=middle dominant-baseline=middle x=" , " y=" ," >", "</text>"];
         
         var a_list;
+        var clean_a_list;
         var back;
-        
+
         function store_links(){
             a_list = {};
             $.get("a_list.txt", function(data){
@@ -53,16 +53,28 @@
                 });
         }
         
+        function store_clean(){
+            clean_a_list = {};
+            for (var key in a_list){
+                clean_a_list[key] = [];
+                for(i=0;i<a_list[key].length;i++){
+                    if(a_list[key][i] in a_list){
+                        clean_a_list[key].push(a_list[key][i]);
+                    }
+                }
+            }
+        }
+        
         function display_links(key){
-            back[0] = back[1];
-            back[1] = key;
-            if (key in a_list){
+            if (key in clean_a_list){
+                back[0] = back[1];
+                back[1] = key;
                 main.innerHTML = '';
                 main.innerHTML += main_b_gra;
                 main.innerHTML += b_svgtxt[0]+"50%"+b_svgtxt[1]+"50%"+b_svgtxt[2]+key+b_svgtxt[3];
                 
-                var r = 45;
-                var dr = 10;
+                var r = 43;
+                var dr = 11;
                 
                 display_links_loop(15, 3, r, dr, key);
                 $("body").html($("body").html());
@@ -70,57 +82,43 @@
         }
         
         function display_links_loop(max_elements, max_circles, r, dr, key){
-            var divlen = Math.floor((a_list[key].length)/max_elements);
-            var modlen = (a_list[key].length) % max_elements;
+            var divlen = Math.floor((clean_a_list[key].length)/max_elements);
+            var modlen = (clean_a_list[key].length) % max_elements;
             var dyx = (2*Math.PI)/(max_elements);
             var start = (2*Math.PI)/(max_elements*2);
             var j;
             
-             if(divlen == max_circles || divlen > max_circles){
-                for(j=0;j<max_circles;j++){
-                    var y;
-                    var x;
-                    for(i=0;i<max_elements;i++){
-                        y = (50+((r-(dr*j))*(Math.sin(i*dyx+(start*j)))));
-                        x = (50+((r-(dr*j))*(Math.cos(i*dyx+(start*j)))));
-                        display_sec_bubble(x+"%", y+"%", key, i+(max_elements*j));
-                    }
-                }
-            }
-            else {
-                for(j=0;j<divlen;j++){
-                    var y;
-                    var x;
-                    for(i=0;i<max_elements;i++){
-                        y = (50+((r-(dr*j))*(Math.sin(i*dyx+(start*j)))));
-                        x = (50+((r-(dr*j))*(Math.cos(i*dyx+(start*j)))));
-                        display_sec_bubble(x+"%", y+"%", key, i+(max_elements*j));
-                    }
-                }
-                dyx = (2*Math.PI)/(modlen);
-                for(i=0;i<modlen;i++){
+            for(j=0;j<divlen;j++){
+                if(j>=max_circles)
+                    break;
+                var y;
+                var x;
+                for(i=0;i<max_elements;i++){
                     y = (50+((r-(dr*j))*(Math.sin(i*dyx+(start*j)))));
                     x = (50+((r-(dr*j))*(Math.cos(i*dyx+(start*j)))));
                     display_sec_bubble(x+"%", y+"%", key, i+(max_elements*j));
                 }
+            }
+            dyx = (2*Math.PI)/(modlen);
+            for(i=0;i<modlen;i++){
+                if(j>=max_circles)
+                    break;
+                y = (50+((r-(dr*j))*(Math.sin(i*dyx+(start*j)))));
+                x = (50+((r-(dr*j))*(Math.cos(i*dyx+(start*j)))));
+                display_sec_bubble(x+"%", y+"%", key, i+(max_elements*j));
             }   
         }
         
         function display_sec_bubble(x, y, key, i){
-            if(a_list[key][i] in a_list){
-                main.innerHTML += b_svggra[0]+x+b_svggra[1]+y+b_svggra[2];
-                $("#main").prepend("<line class=sec_line x1=50% y1=50% x2="+x+" y2="+y+"> </line>");
-            }
-            else {
-                main.innerHTML += b_svggra[0]+x+b_svggra[1]+y+" style=\"stroke:blue;\""+b_svggra[2];
-                $("#main").prepend("<line class=sec_line x1=50% y1=50% x2="+x+" y2="+y+" style=\"stroke:blue;\""+"> </line>");
-            }
-            main.innerHTML += b_svgtxt[0]+x+b_svgtxt[1]+y+b_svgtxt[2]+a_list[key][i]+b_svgtxt[3];
+            main.innerHTML += b_svggra[0]+x+b_svggra[1]+y+b_svggra[2];
+            $("#main").prepend("<line class=sec_line x1=50% y1=50% x2="+x+" y2="+y+"> </line>");
+            main.innerHTML += b_svgtxt[0]+x+b_svgtxt[1]+y+b_svgtxt[2]+clean_a_list[key][i]+b_svgtxt[3];
         }
         
         window.onload = function() {
             store_links();
-            back =["https://nd.edu/","https://nd.edu/"];
+            setTimeout(function() {store_clean(); display_links("https://nd.edu/")}, 15);
+            back = ["https://nd.edu/","https://nd.edu/"];
         }
         $("#start").click(function() {display_links("https://nd.edu/")});
         $("#btn").click(function() {display_links(back[0])});
