@@ -11,7 +11,19 @@
 
 ## crawler.py
 ### main contributor : Michael Parowski
-  - 
+ - Crawler is the actual HTML parser and link finder. It utilizes BeautifulSoup to easily parse
+the HTML and identify all 'a' tags with an href attribute (all links in a given HTML page. From
+the main execution of the program, https://www.nd.edu is inputted to the recursive crawl function
+as the root web page. crawl_r then calls the crawl function that actually does all of the work.
+Iterating over the beautiful soup object using the find_all method, crawl identifies each link and
+adds it to a list as long as it is not a map, calendar, or non-ND website to weed out some less 
+interesting data. After formatting all of the links that pass the test for uniformity, a list is
+returned to crawl_r that can then be iterated through, again calling crawl to do the same. All this
+while, a dictionary is being populated where the key is the base url and the value is a list of all
+pertinent href links. The very end of the program prints out the dictionary in a way that can be 
+easily read by index.html. In order to output to a file, unicode errors would have to be fixed, which
+we could not seem to figure out in time, so we resorted to simply copy/pasting to text documents for 
+index.html.
 
 ## index.html
 ### main contributor : Jasmine Walker
