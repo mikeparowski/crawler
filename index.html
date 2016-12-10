@@ -11,7 +11,12 @@
 <html>
     <head><title>Crawler</title></head>
     <body style="background-color:whitesmoke;">
+        <p id=test></p>
         <h1>Web Map</h1>
+        <button class=move_btn data-x=175 data-y=0>go left</button>
+        <button class=move_btn data-x=-175 data-y=0>go right</button>
+        <button class=move_btn data-x=0 data-y=175>go up</button>
+        <button class=move_btn data-x=0 data-y=-175>go down</button>
         <div class="map">
             <svg id="web" style="position:relative;" height="100%" width="100%">
             </svg>
@@ -22,21 +27,31 @@
             </svg>
         </div>
         <button id="btn">dijkstras</button>
-        <div id=test style="height:30px"></div>
+        <div style="height:30px">
+            <input type="text" id="start" value="hi" /> <input style="left:20%"type="text" id="finish" value="aa"/>
+        </div>
     </body>
+    <!--
+        "transform", "translate("+translate_x+","+translate_y+")"
+        -->
 </html>
     
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script>
 
     var nodes;
+    var translate_x;
+    var translate_y;
     var secColor = "powderblue";
     var mainColor = "lightseagreen";
-    var leafColor = "lightcoral"
+    var leafColor = "lightcoral";
+    var usingList = "a_list";
+    var main_url = "http://registrar.nd.edu/";
 
     function store_links(){
         nodes = {};
-        $.get("jasminetest.txt", function(data){
+        $.get("a_list_large.txt", function(data){
             var lines=data.split('\n');  
             for(i=0;i<lines.length;i++){
                 var words = lines[i].split(' ');
@@ -61,14 +76,15 @@
     }
 
     function display_links(key, list){
-        if (nodes[key][list].length > 0){
-            document.getElementById("web").innerHTML = '';
-            create_bubble_and_text("web", "50%", "50%", key, mainColor);
-
-            var r = 43;
-            var dr = 11;
-            display_links_loop(15, 3, r, dr, key, list);
-            $("body").html($("body").html());
+        if(key in nodes){
+            if (nodes[key][list].length > 0){
+                document.getElementById("web").innerHTML = '';
+                create_bubble_and_text("web", "50%", "50%", key, mainColor);
+                var r = 15;
+                var dr = 10;
+                display_links_loop(15, r, dr, key, list);
+                $("body").html($("body").html());
+            }
         }
     }
 
@@ -83,7 +99,7 @@
         $("#"+id).prepend("<line style=\"stroke:"+color+";stroke-width:2;\" x1="+x1+" y1="+y1+" x2="+x2+" y2="+y2+"> </line>")
     }
 
-    function display_links_loop(max_elements, max_circles, r, dr, key, list){
+    function display_links_loop(max_elements, r, dr, key, list){
         var divlen = Math.floor((nodes[key][list].length)/max_elements);
         var modlen = (nodes[key][list].length) % max_elements;
         var dyx = (2*Math.PI)/(max_elements);
@@ -91,20 +107,16 @@
         var j;
 
         for(j=0;j<divlen;j++){
-            if(j>=max_circles)
-                break;
             var y;
             var x;
             for(i=0;i<max_elements;i++){
-                y = (50+((r-(dr*j))*(Math.sin(i*dyx+(start*j)))));
-                x = (50+((r-(dr*j))*(Math.cos(i*dyx+(start*j)))));
+                y = (50+((r+(dr*j))*(Math.sin(i*dyx+(start*j)))));
+                x = (50+((r+(dr*j))*(Math.cos(i*dyx+(start*j)))));
                 display_sec_bubble(x+"%", y+"%", key, i+(max_elements*j), list);
             }
         }
         dyx = (2*Math.PI)/(modlen);
         for(i=0;i<modlen;i++){
-            if(j>=max_circles)
-                break;
             y = (50+((r-(dr*j))*(Math.sin(i*dyx+(start*j)))));
             x = (50+((r-(dr*j))*(Math.cos(i*dyx+(start*j)))));
             display_sec_bubble(x+"%", y+"%", key, i+(max_elements*j), list);
@@ -173,7 +185,7 @@
         var dx = 100/solutions.length;
         var start = 100/(solutions.length * 2);
         var i;
-        
+        $("#path").empty();
         create_bubble_and_text("path", (start)+"%", "50%", solutions[0], mainColor);
         for(i=1; i<(solutions.length-1); i++){
             create_bubble_and_text("path", ((i*dx)+start)+"%", "50%", solutions[i], secColor);
@@ -186,8 +198,18 @@
 
     window.onload = function() {
         store_links();
-        setTimeout(function() {store_clean(); display_links("https://nd.edu/", "clean_list")}, 20);
+        setTimeout(function() {store_clean(); setTimeout(function() {display_links(main_url, usingList); ;}, 500); 500});
+        $("#start").attr("value", main_url);
+        $("#finish").attr("value", main_url);
+        translate_x = 0;
+        translate_y = 0;
     }
-    $("#btn").click(function() {dijkstras("https://nd.edu/", "aa", "clean_list")})
-    $(".text").click(function() {display_links(this.innerHTML, "clean_list");});
+    $(".move_btn").click(function() { 
+        translate_x += +($(this).attr("data-x"));
+        translate_y += +($(this).attr("data-y"));
+        var translateit = "translate("+translate_x+","+translate_y+")";
+        $("#web > *").attr("transform", "translate("+translate_x+","+translate_y+")");
+    });
+    $("#btn").click(function(){ dijkstras($("#start").prop("value"), $("#finish").prop("value"), usingList) });
+    $(".text").click(function() {display_links(this.innerHTML, usingList);});
 </script>

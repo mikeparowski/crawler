@@ -1,8 +1,0 @@
-https://nd.edu/ a b c d e f g h i j k l m n o p q r s t u v w x y z
-a b c d e f g h i j k l aa
-b a c d e f g h i j k l
-c a b d e f g h i j k l
-d
-e  
-f g
-aa d b a 
